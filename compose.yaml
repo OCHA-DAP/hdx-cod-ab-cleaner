@@ -1,0 +1,7 @@
+services:
+  hdx-cod-ab-cleaner:
+    build: .
+    env_file: .env
+    volumes:
+      - ./app:/srv/app
+      - ./data:/srv/data
