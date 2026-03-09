@@ -1,6 +1,7 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
+import pycountry
 from geopandas import read_parquet
 
 from ..config import data_dir
@@ -27,6 +28,14 @@ def clean_admin(input_path: Path) -> None:
             gdf1["dissolve"] = gdf1[f"adm{lvl}_pcode"]
             gdf1 = gdf1.dissolve(by="dissolve")
             gdf1 = gdf1.reset_index(drop=True)
+            if lvl == 0:
+                country = pycountry.countries.get(alpha_3=iso3.upper())
+                gdf1["iso2"] = country.alpha_2 if country else None
+                gdf1["iso3"] = iso3.upper()
+                gdf1 = gdf1[
+                    ["iso2", "iso3"]
+                    + [c for c in gdf1.columns if c not in ("iso2", "iso3")]
+                ]
             cleaning(gdf1, output_path, f"{iso3}_admin{lvl}")
         convert(output_path, f"{iso3}_admin{level}", output_pre_em)
 
