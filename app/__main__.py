@@ -16,7 +16,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    download_admin0()
+    if args.edge_match:
+        download_admin0()
     for layer in sorted((data_dir / "inputs").glob("*adm*")):
         clean_admin(layer)
         if args.edge_match:
